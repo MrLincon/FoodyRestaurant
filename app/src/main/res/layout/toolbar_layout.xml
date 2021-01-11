@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
+    android:elevation="0dp"
+    android:minHeight="?attr/actionBarSize"
+    app:popupTheme="@style/PopupOverlay">
+
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_filter"></ImageView>
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/colorText"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="right"
+        android:src="@drawable/img_user"></de.hdodenhof.circleimageview.CircleImageView>
+
+</androidx.appcompat.widget.Toolbar>

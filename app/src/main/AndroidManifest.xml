@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.idk.foodyrestaurant">
+
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".Activities.EditProfileActivity"
+            android:parentActivityName=".Activities.ProfileActivity"></activity>
+        <activity android:name=".Activities.PostActivity" />
+        <activity
+            android:name=".Activities.DetailsActivity"
+            android:parentActivityName=".Activities.MainActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity
+            android:name=".Activities.DetailsActivityOffer"
+            android:parentActivityName=".Activities.MainActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity android:name=".Authentication.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Authentication.PasswordRecoveryActivity"
+            android:parentActivityName=".Authentication.LoginActivity" />
+        <activity android:name=".Activities.SettingsActivity" />
+        <activity
+            android:name=".Activities.ProfileActivity"
+            android:parentActivityName=".Activities.MainActivity" />
+        <activity
+            android:name=".Activities.ProfileActivityView"
+            android:parentActivityName=".Activities.MainActivity" />
+        <activity android:name=".Activities.MainActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>
