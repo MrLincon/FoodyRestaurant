@@ -41,7 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
     private CardView editProfile;
     private RecyclerView recyclerView;
 
-    private TextView name,email, time, day;
+    private TextView name, email, time, day, res_menu;
 
     private FirebaseAuth mAuth;
     private String userID;
@@ -62,12 +62,14 @@ public class ProfileActivity extends AppCompatActivity {
         appBarLayout = findViewById(R.id.appBarLayout);
         toolbarTitle = findViewById(R.id.toolbar_title);
         close = findViewById(R.id.close);
-        editProfile =  findViewById(R.id.edit_profile);
+        editProfile = findViewById(R.id.edit_profile);
 
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         time = findViewById(R.id.opened_times);
         day = findViewById(R.id.opened_days);
+
+        res_menu = findViewById(R.id.res_menu);
 
         recyclerView = findViewById(R.id.my_posts_recyclerview);
         int topPadding = getResources().getDimensionPixelSize(R.dimen.topPadding);
@@ -92,15 +94,22 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        res_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent menuIntent = new Intent(ProfileActivity.this, MenuActivity.class);
+                startActivity(menuIntent);
+            }
+        });
 
-       editProfile.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               Intent edit_profile = new Intent(ProfileActivity.this,EditProfileActivity.class);
-               startActivity(edit_profile);
-               finish();
-           }
-       });
+        editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent edit_profile = new Intent(ProfileActivity.this, EditProfileActivity.class);
+                startActivity(edit_profile);
+                finish();
+            }
+        });
 
 
         document_reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -153,8 +162,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         CollectionReference myPosts = db.collection("Feed");
 
-        Query query = myPosts.whereEqualTo("user_id",userID)
-        .orderBy("timestamp", Query.Direction.DESCENDING);
+        Query query = myPosts.whereEqualTo("user_id", userID)
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
@@ -205,4 +214,10 @@ public class ProfileActivity extends AppCompatActivity {
         adapter.stopListening();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        Intent i = new Intent(ProfileActivity.this, MainActivity.class);
+        startActivity(i);
+    }
 }

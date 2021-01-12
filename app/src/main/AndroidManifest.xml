@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.idk.foodyrestaurant">
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,8 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.EditProfileActivity"
+        <activity
+            android:name=".Activities.MenuActivityView"
+            android:parentActivityName=".Activities.ProfileActivityView"></activity>
+        <activity android:name=".Activities.MenuActivity"
             android:parentActivityName=".Activities.ProfileActivity"></activity>
+        <activity
+            android:name=".Activities.EditProfileActivity"
+            android:parentActivityName=".Activities.ProfileActivity" />
         <activity android:name=".Activities.PostActivity" />
         <activity
             android:name=".Activities.DetailsActivity"

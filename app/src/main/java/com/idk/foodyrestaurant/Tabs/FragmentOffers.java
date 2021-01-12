@@ -25,6 +25,7 @@ import com.idk.foodyrestaurant.Activities.DetailsActivityOffer;
 import com.idk.foodyrestaurant.Models.Feed;
 import com.idk.foodyrestaurant.Models.FeedAdapter;
 import com.idk.foodyrestaurant.Models.FeedRecyclerDecoration;
+import com.idk.foodyrestaurant.Models.OfferFeedAdapter;
 import com.idk.foodyrestaurant.R;
 
 public class FragmentOffers extends Fragment {
@@ -38,7 +39,7 @@ public class FragmentOffers extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference feed = db.collection("Offer");
 
-    private FeedAdapter adapter;
+    private OfferFeedAdapter adapter;
 
 
     public static final String EXTRA_ID = "com.example.foody.EXTRA_ID";
@@ -74,7 +75,7 @@ public class FragmentOffers extends Fragment {
                 .setQuery(query, config, Feed.class)
                 .build();
 
-        adapter = new FeedAdapter(options,swipeRefreshLayout);
+        adapter = new OfferFeedAdapter(options,swipeRefreshLayout);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
@@ -87,7 +88,7 @@ public class FragmentOffers extends Fragment {
             }
         });
 
-        adapter.setOnItemClickListener(new FeedAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new OfferFeedAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot) {
                 Feed feed = documentSnapshot.toObject(Feed.class);

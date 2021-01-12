@@ -110,6 +110,7 @@
                             android:layout_height="20dp"
                             android:layout_gravity="center"
                             android:layout_marginRight="16dp"
+                            android:tint="@color/colorBlue"
                             android:src="@drawable/ic_time"></androidx.appcompat.widget.AppCompatImageView>
 
                         <TextView
@@ -138,6 +139,7 @@
                             android:layout_height="20dp"
                             android:layout_gravity="center"
                             android:layout_marginRight="16dp"
+                            android:tint="@color/colorBlue"
                             android:src="@drawable/ic_calendar_selected"></androidx.appcompat.widget.AppCompatImageView>
 
                         <TextView
@@ -173,6 +175,7 @@
                                 android:src="@drawable/ic_menu"></ImageView>
 
                             <TextView
+                                android:id="@+id/res_menu"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/montserrat_bold"

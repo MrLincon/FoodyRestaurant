@@ -29,7 +29,7 @@ import com.idk.foodyrestaurant.R;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHolder> {
+public class OfferFeedAdapter extends FirestorePagingAdapter<Feed, OfferFeedAdapter.FeedHolder> {
 
     private OnItemClickListener listener;
     private Context mContext;
@@ -38,7 +38,7 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
 
-    public FeedAdapter(@NonNull FirestorePagingOptions<Feed> options, SwipeRefreshLayout swipeRefreshLayout) {
+    public OfferFeedAdapter(@NonNull FirestorePagingOptions<Feed> options, SwipeRefreshLayout swipeRefreshLayout) {
         super(options);
         this.mswipeRefreshLayout = swipeRefreshLayout;
     }
@@ -56,7 +56,7 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
             @Override
             public void onClick(View v) {
                 Log.d("post_id", post_id);
-                firebaseFirestore.collection("Feed").document(post_id).collection("Likes").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                firebaseFirestore.collection("Offer").document(post_id).collection("Likes").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -65,11 +65,11 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
                             Map<String, Object> likes = new HashMap<>();
                             likes.put("timestamp", FieldValue.serverTimestamp());
 
-                            firebaseFirestore.collection("Feed/" + post_id + "/Likes").document(user_id).set(likes);
+                            firebaseFirestore.collection("Offer/" + post_id + "/Likes").document(user_id).set(likes);
 
                         } else {
 
-                            firebaseFirestore.collection("Feed").document(post_id).collection("Likes").document(user_id).delete();
+                            firebaseFirestore.collection("Offer").document(post_id).collection("Likes").document(user_id).delete();
 
                         }
                     }
@@ -79,7 +79,7 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
         });
 
         //Update Like icon
-        firebaseFirestore.collection("Feed").document(post_id).collection("Likes").document(user_id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        firebaseFirestore.collection("Offer").document(post_id).collection("Likes").document(user_id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
@@ -97,7 +97,7 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
         });
 
         //Get Likes Count
-        firebaseFirestore.collection("Feed").document(post_id).collection("Likes").addSnapshotListener( new EventListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Offer").document(post_id).collection("Likes").addSnapshotListener( new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -112,7 +112,7 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
         });
 
         //Get views Count
-        firebaseFirestore.collection("Feed").document(post_id).collection("Views").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Offer").document(post_id).collection("Views").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -126,7 +126,7 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
         });
 
         //Get comments Count
-        firebaseFirestore.collection("Feed").document(post_id).collection("Comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Offer").document(post_id).collection("Comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 

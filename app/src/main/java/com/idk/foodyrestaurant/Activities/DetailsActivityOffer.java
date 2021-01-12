@@ -1,5 +1,6 @@
 package com.idk.foodyrestaurant.Activities;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,41 +19,64 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.idk.foodyrestaurant.Models.Comment;
+import com.idk.foodyrestaurant.Models.CommentAdapter;
 import com.idk.foodyrestaurant.R;
 import com.idk.foodyrestaurant.Tabs.FragmentFeed;
 import com.idk.foodyrestaurant.Tabs.FragmentOffers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DetailsActivityOffer extends AppCompatActivity {
+
 
     private Toolbar toolbar;
     private TextView toolbarTitle;
     private AppBarLayout appBarLayout;
-    private ImageView back, edit, delete;
-    private TextView name, restaurant, details;
+    private ImageView back, edit, delete, like, send;
+    private EditText et_comment;
+    private TextView name, restaurant, details, like_count, views_count, comments_count, tv_comment;
     private String Details;
     private String ID, userID;
+
+    private RecyclerView recyclerView;
 
     Dialog editPost;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private DocumentReference document_reference;
+    private FirebaseFirestore firebaseFirestore;
+    private DocumentReference document_reference, document_ref, doc_ref;
+
+    private CommentAdapter adapter;
+
+    public static final String EXTRA_ID = "com.example.foody.EXTRA_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-
         toolbar = findViewById(R.id.toolbar);
         toolbarTitle = findViewById(R.id.toolbar_title);
         appBarLayout = findViewById(R.id.appBarLayout);
@@ -62,19 +87,43 @@ public class DetailsActivityOffer extends AppCompatActivity {
         restaurant = findViewById(R.id.tv_restaurant);
         details = findViewById(R.id.tv_details);
 
+        et_comment = findViewById(R.id.comment);
+        tv_comment = findViewById(R.id.tv_comment);
+        send = findViewById(R.id.send);
+
+        like = findViewById(R.id.like);
+        like_count = findViewById(R.id.like_count);
+        comments_count = findViewById(R.id.comments_count);
+        views_count = findViewById(R.id.views_count);
+
         editPost = new Dialog(this);
 
+        recyclerView = findViewById(R.id.comment_recyclerview);
+
         final Intent intent = getIntent();
+
+        toolbarTitle.setText("Details");
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getUid();
 
-        ID = intent.getStringExtra(FragmentOffers.EXTRA_ID);
+        ID = intent.getStringExtra(FragmentFeed.EXTRA_ID);
 
         db = FirebaseFirestore.getInstance();
         document_reference = db.collection("Offer").document(ID);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        document_ref = db.collection("RestaurantDetails").document(userID);
+        doc_ref = db.collection("Comments").document();
 
         loadData();
+        loadComments();
+
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userComment();
+            }
+        });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,17 +205,6 @@ public class DetailsActivityOffer extends AppCompatActivity {
             }
         });
 
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
-                    toolbarTitle.setVisibility(View.VISIBLE);
-                } else if (verticalOffset == 0) {
-                    toolbarTitle.setVisibility(View.GONE);
-                }
-            }
-        });
-
     }
 
     private void loadData() {
@@ -193,8 +231,6 @@ public class DetailsActivityOffer extends AppCompatActivity {
                     restaurant.setText("@" + Restaurant);
                     details.setText(Details);
 
-                    toolbarTitle.setText("@" + Restaurant);
-
                 } else {
 
                 }
@@ -205,5 +241,226 @@ public class DetailsActivityOffer extends AppCompatActivity {
                 Toast.makeText(DetailsActivityOffer.this, "Something wrong!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        viewFeatures();
+        likeFeatures();
+        commentFeatures();
+
+
+    }
+
+    private void viewFeatures() {
+        //View features
+
+        firebaseFirestore.collection("Feed").document(ID).collection("Views").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                Map<String, Object> views = new HashMap<>();
+                views.put("timestamp", FieldValue.serverTimestamp());
+
+                firebaseFirestore.collection("Feed").document(ID).collection("Views").document(userID).set(views);
+
+            }
+        });
+
+        //Get views Count
+        firebaseFirestore.collection("Feed").document(ID).collection("Views").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if (!documentSnapshots.isEmpty()) {
+                    String count = String.valueOf(documentSnapshots.size());
+                    views_count.setText(count);
+                } else {
+                    views_count.setText("0");
+                }
+            }
+        });
+    }
+
+    private void likeFeatures() {
+        //Like features
+        like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseFirestore.collection("Offer").document(ID).collection("Likes").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                        if (!task.getResult().exists()) {
+
+                            Map<String, Object> likes = new HashMap<>();
+                            likes.put("timestamp", FieldValue.serverTimestamp());
+
+                            firebaseFirestore.collection("Offer").document(ID).collection("Likes").document(userID).set(likes);
+
+                        } else {
+
+                            firebaseFirestore.collection("Offer").document(ID).collection("Likes").document(userID).delete();
+
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+        //Update like icon
+        firebaseFirestore.collection("Offer").document(ID).collection("Likes").document(userID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                if (documentSnapshot.exists()) {
+
+                    like.setImageResource(R.drawable.ic_heart_selected);
+
+                } else {
+
+                    like.setImageResource(R.drawable.ic_heart);
+
+                }
+            }
+        });
+
+        //Get like Count
+        firebaseFirestore.collection("Offer").document(ID).collection("Likes").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if (!documentSnapshots.isEmpty()) {
+                    String count = String.valueOf(documentSnapshots.size());
+                    like_count.setText(count);
+                } else {
+                    like_count.setText("0");
+                }
+            }
+        });
+    }
+
+    private void commentFeatures() {
+        //Get comments Count
+        firebaseFirestore.collection("Offer").document(ID).collection("Comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if (!documentSnapshots.isEmpty()) {
+                    String count = String.valueOf(documentSnapshots.size());
+                    comments_count.setText(count);
+                } else {
+                    comments_count.setText("0");
+                }
+            }
+        });
+    }
+
+    private void userComment() {
+
+        hideKeyboard(DetailsActivityOffer.this);
+
+        final String id = document_ref.getId();
+        final String Comment = et_comment.getText().toString().trim();
+
+        if (!Comment.isEmpty()){
+            document_ref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                    if (documentSnapshot.exists()) {
+
+                        String Name = documentSnapshot.getString("name");
+
+                        Map<String, Object> userMap = new HashMap<>();
+
+                        userMap.put("name", Name);
+                        userMap.put("comment", Comment);
+                        userMap.put("user_id", userID);
+                        userMap.put("post_id", ID);
+                        userMap.put("id", id);
+                        userMap.put("timestamp", FieldValue.serverTimestamp());
+                        doc_ref.set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                et_comment.setText("");
+                                Toast.makeText(DetailsActivityOffer.this, "Adding..", Toast.LENGTH_LONG).show();
+
+                                firebaseFirestore.collection("Offer").document(ID).collection("Comments").document().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                        Map<String, Object> comments = new HashMap<>();
+                                        comments.put("timestamp", FieldValue.serverTimestamp());
+
+                                        firebaseFirestore.collection("Offer").document(ID).collection("Comments").document().set(comments);
+
+                                    }
+                                });
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(DetailsActivityOffer.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(DetailsActivityOffer.this, "Something wrong!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            Intent restartActivity = new Intent(getApplication(), DetailsActivityOffer.class);
+            restartActivity.putExtra(EXTRA_ID, ID);
+            startActivity(restartActivity);
+            finish();
+        }else{
+            Toast.makeText(this, "You must write something!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadComments() {
+        CollectionReference comments = db.collection("Comments");
+
+        Query query = comments.whereEqualTo("post_id", ID).orderBy("timestamp", Query.Direction.DESCENDING);
+
+        PagedList.Config config = new PagedList.Config.Builder()
+                .setInitialLoadSizeHint(10)
+                .setPageSize(15)
+                .build();
+
+        FirestorePagingOptions<Comment> options = new FirestorePagingOptions.Builder<Comment>()
+                .setQuery(query, config, Comment.class)
+                .build();
+
+        adapter = new CommentAdapter(options);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setAdapter(adapter);
+        adapter.startListening();
+
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = activity.getCurrentFocus();
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 }

@@ -35,13 +35,14 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="24dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="24dp"
-            android:layout_marginBottom="16dp"
+            android:paddingBottom="8dp"
             android:layout_toRightOf="@+id/linearLayout1">
 
             <TextView
@@ -62,8 +63,45 @@
                 android:textColor="@color/colorText"
                 android:textSize="12sp"></TextView>
 
+            <LinearLayout
+                android:id="@id/linearLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <ImageView
+                    android:id="@+id/like"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_like"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingRight="10dp"></ImageView>
+
+                <TextView
+                    android:id="@+id/like_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat"
+                    android:text="0"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorText"
+                    android:layout_gravity="center"></TextView>
+
+            </LinearLayout>
+
         </LinearLayout>
 
+        <View
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/colorView"
+            android:layout_toRightOf="@id/linearLayout1"
+            android:layout_alignBottom="@id/linearLayout2"
+            android:layout_marginBottom="1dp"></View>
+
     </RelativeLayout>
+
 
 </androidx.cardview.widget.CardView>

@@ -84,6 +84,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center"
+                            android:tint="@color/colorBlue"
                             android:layout_marginRight="16dp"
                             android:src="@drawable/ic_time"></androidx.appcompat.widget.AppCompatImageView>
 
@@ -112,6 +113,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center"
+                            android:tint="@color/colorBlue"
                             android:layout_marginRight="16dp"
                             android:src="@drawable/ic_calendar_selected"></androidx.appcompat.widget.AppCompatImageView>
 
@@ -148,6 +150,7 @@
                                 android:src="@drawable/ic_menu"></ImageView>
 
                             <TextView
+                                android:id="@+id/food_menu"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/montserrat_bold"
