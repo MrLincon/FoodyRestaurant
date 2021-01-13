@@ -5,12 +5,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
@@ -34,6 +36,7 @@ public class RestaurantAdapter extends FirestorePagingAdapter<Restaurant, Restau
         holder.Location.setText(model.getLocation());
         holder.Day.setText(model.getDay());
         holder.Time.setText(model.getTime());
+        Glide.with(mContext).load(model.getUserImageUrl()).into(holder.UserImage);
     }
 
     @Override
@@ -75,10 +78,12 @@ public class RestaurantAdapter extends FirestorePagingAdapter<Restaurant, Restau
 
     class RestaurantHolder extends RecyclerView.ViewHolder {
         TextView Name, Location, Day, Time;
+        ImageView UserImage;
         public RestaurantHolder(View itemView) {
             super(itemView);
             Name = itemView.findViewById(R.id.name);
             Location = itemView.findViewById(R.id.location);
+            UserImage = itemView.findViewById(R.id.profile);
             Day = itemView.findViewById(R.id.day_opened);
             Time = itemView.findViewById(R.id.time_opened);
 

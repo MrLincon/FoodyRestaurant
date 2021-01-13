@@ -63,8 +63,11 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/post_image"
             android:layout_width="match_parent"
-            android:layout_height="260dp"></ImageView>
+            android:layout_height="260dp"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"></ImageView>
 
         <RelativeLayout
             android:layout_width="fill_parent"

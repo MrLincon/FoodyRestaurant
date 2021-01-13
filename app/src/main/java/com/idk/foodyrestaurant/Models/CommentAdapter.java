@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
@@ -47,6 +48,7 @@ public class CommentAdapter extends FirestorePagingAdapter<Comment, CommentAdapt
 
         holder.Name.setText(model.getName());
         holder.Comment.setText(model.getComment());
+        Glide.with(mContext).load(model.getUserImageUrl()).into(holder.User_Image);
 
         //Like Features
         holder.Like.setOnClickListener(new View.OnClickListener() {
@@ -125,11 +127,12 @@ public class CommentAdapter extends FirestorePagingAdapter<Comment, CommentAdapt
 
     class CommentHolder extends RecyclerView.ViewHolder {
         TextView Name,Comment, Like_count;
-        ImageView Like;
+        ImageView Like, User_Image;
         public CommentHolder(View itemView) {
             super(itemView);
             Name = itemView.findViewById(R.id.name);
             Comment = itemView.findViewById(R.id.comment);
+            User_Image = itemView.findViewById(R.id.profile);
             Like = itemView.findViewById(R.id.like);
             Like_count = itemView.findViewById(R.id.like_count);
 

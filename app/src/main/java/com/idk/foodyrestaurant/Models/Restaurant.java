@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Restaurant {
 
-    private String name, location, time, day, id;
+    private String name, location, time, day, id, userImageUrl;
 
     public Restaurant() {
     }
@@ -45,6 +45,14 @@ public class Restaurant {
 
     public String getId() {
         return id;
+    }
+
+    public String getUserImageUrl() {
+        return userImageUrl;
+    }
+
+    public void setUserImageUrl(String userImageUrl) {
+        this.userImageUrl = userImageUrl;
     }
 
     public void setId(String id) {

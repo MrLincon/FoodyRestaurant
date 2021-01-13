@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
@@ -50,6 +51,8 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
 
         holder.Name.setText(model.getName());
         holder.Restaurant.setText("@"+model.getRestaurant());
+        Glide.with(mContext).load(model.getPostImageUrl()).into(holder.PostImage);
+        Glide.with(mContext).load(model.getUserImageUrl()).into(holder.UserImage);
 
         //Like Features
         holder.Like.setOnClickListener(new View.OnClickListener() {
@@ -182,12 +185,14 @@ public class FeedAdapter extends FirestorePagingAdapter<Feed, FeedAdapter.FeedHo
 
     class FeedHolder extends RecyclerView.ViewHolder {
         TextView Name,Restaurant, Like_count,Comment_count, Views_count;
-        ImageView Like,Comment;
+        ImageView Like,Comment, PostImage, UserImage;
         public FeedHolder(View itemView) {
             super(itemView);
             Name = itemView.findViewById(R.id.name);
             Restaurant = itemView.findViewById(R.id.restaurant);
             Like = itemView.findViewById(R.id.like);
+            PostImage = itemView.findViewById(R.id.post_image);
+            UserImage = itemView.findViewById(R.id.profile);
             Comment = itemView.findViewById(R.id.comment);
             Like_count = itemView.findViewById(R.id.like_count);
             Comment_count = itemView.findViewById(R.id.comments_count);

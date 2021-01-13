@@ -15,6 +15,7 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,7 +40,7 @@ public class ProfileActivityView extends AppCompatActivity {
     private Toolbar toolbar;
     private AppBarLayout appBarLayout;
     private TextView toolbarTitle;
-    private ImageView close;
+    private ImageView close, profile_image;
     private RecyclerView recyclerView;
 
     private TextView name,email, time, day, foodMenu;
@@ -62,6 +63,7 @@ public class ProfileActivityView extends AppCompatActivity {
         appBarLayout = findViewById(R.id.appBarLayout);
         toolbarTitle = findViewById(R.id.toolbar_title);
         close = findViewById(R.id.close);
+        profile_image = findViewById(R.id.profile);
 
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
@@ -113,12 +115,14 @@ public class ProfileActivityView extends AppCompatActivity {
                     String Email = documentSnapshot.getString("email");
                     String Time = documentSnapshot.getString("time");
                     String Day = documentSnapshot.getString("day");
+                    String UserImageUrl = documentSnapshot.getString("userImageUrl");
 
                     toolbarTitle.setText(Name);
                     name.setText(Name);
                     email.setText(Email);
                     time.setText(Time);
                     day.setText(Day);
+                    Glide.with(getApplicationContext()).load(UserImageUrl).into(profile_image);
 
                 } else {
                     Toast.makeText(ProfileActivityView.this, "Something wrong!", Toast.LENGTH_LONG).show();

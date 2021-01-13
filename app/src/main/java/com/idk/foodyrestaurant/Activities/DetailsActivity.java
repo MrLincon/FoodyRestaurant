@@ -24,6 +24,7 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -55,7 +56,7 @@ public class DetailsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView toolbarTitle;
     private AppBarLayout appBarLayout;
-    private ImageView back, edit, delete, like, send;
+    private ImageView back, edit, delete, like, send,  post_image, user_profile, comment_user_image;
     private EditText et_comment;
     private TextView name, restaurant, details, like_count, views_count, comments_count, tv_comment;
     private String Details;
@@ -89,6 +90,9 @@ public class DetailsActivity extends AppCompatActivity {
         restaurant = findViewById(R.id.tv_restaurant);
         details = findViewById(R.id.tv_details);
 
+        post_image = findViewById(R.id.post_image);
+        user_profile = findViewById(R.id.profile);
+        comment_user_image = findViewById(R.id.user_img);
         et_comment = findViewById(R.id.comment);
         tv_comment = findViewById(R.id.tv_comment);
         send = findViewById(R.id.send);
@@ -219,6 +223,8 @@ public class DetailsActivity extends AppCompatActivity {
                     String Restaurant = documentSnapshot.getString("restaurant");
                     Details = documentSnapshot.getString("details");
                     String User_ID = documentSnapshot.getString("user_id");
+                    String PostImageUrl = documentSnapshot.getString("postImageUrl");
+                    String UserImageUrl = documentSnapshot.getString("userImageUrl");
 
                     if (User_ID.equals(userID)) {
                         delete.setVisibility(View.VISIBLE);
@@ -231,8 +237,31 @@ public class DetailsActivity extends AppCompatActivity {
                     name.setText(Name);
                     restaurant.setText("@" + Restaurant);
                     details.setText(Details);
+                    Glide.with(getApplicationContext()).load(PostImageUrl).into(post_image);
+                    Glide.with(getApplicationContext()).load(UserImageUrl).into(user_profile);
 //
 //                    toolbarTitle.setText("@" + Restaurant);
+
+                } else {
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(DetailsActivity.this, "Something wrong!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        document_ref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                if (documentSnapshot.exists()) {
+
+                    String UserImageUrl = documentSnapshot.getString("userImageUrl");
+
+                    Glide.with(getApplicationContext()).load(UserImageUrl).into(comment_user_image);
 
                 } else {
 
@@ -374,12 +403,14 @@ public class DetailsActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
 
                         String Name = documentSnapshot.getString("name");
+                        String UserImageUrl = documentSnapshot.getString("userImageUrl");
 
                         Map<String, Object> userMap = new HashMap<>();
 
                         userMap.put("name", Name);
                         userMap.put("comment", Comment);
                         userMap.put("user_id", userID);
+                        userMap.put("userImageUrl", UserImageUrl);
                         userMap.put("post_id", ID);
                         userMap.put("id", id);
                         userMap.put("timestamp", FieldValue.serverTimestamp());

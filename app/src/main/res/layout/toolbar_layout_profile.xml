@@ -5,8 +5,8 @@
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
     android:elevation="0dp"
-    app:layout_collapseMode="pin"
     android:minHeight="?attr/actionBarSize"
+    app:layout_collapseMode="pin"
     app:popupTheme="@style/PopupOverlay">
 
     <ImageView
@@ -26,6 +26,18 @@
         android:fontFamily="@font/montserrat"
         android:textColor="@color/colorText"
         android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:layout_marginRight="16dp"
+        android:fontFamily="@font/montserrat"
+        android:text="Save"
+        android:visibility="gone"
+        android:textColor="@color/colorText"
+        android:textSize="16sp"></TextView>
 
 </androidx.appcompat.widget.Toolbar>

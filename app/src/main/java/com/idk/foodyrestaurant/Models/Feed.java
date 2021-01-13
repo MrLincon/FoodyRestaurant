@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Feed {
 
-    private String name,restaurant,details,id, used_id;
+    private String name,restaurant,details,id, used_id, postImageUrl, userImageUrl;
     private @ServerTimestamp
     Date timestamp;
 
@@ -47,6 +47,22 @@ public class Feed {
 
     public String getUsed_id() {
         return used_id;
+    }
+
+    public String getPostImageUrl() {
+        return postImageUrl;
+    }
+
+    public void setPostImageUrl(String postImageUrl) {
+        this.postImageUrl = postImageUrl;
+    }
+
+    public String getUserImageUrl() {
+        return userImageUrl;
+    }
+
+    public void setUserImageUrl(String userImageUrl) {
+        this.userImageUrl = userImageUrl;
     }
 
     public void setUsed_id(String used_id) {

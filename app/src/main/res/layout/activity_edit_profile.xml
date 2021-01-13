@@ -171,7 +171,7 @@
         android:layout_marginBottom="32dp"
         android:background="@drawable/round_edge"
         android:text="Update"
-        android:textColor="#fff"
+        android:textColor="@color/colorWhite"
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
